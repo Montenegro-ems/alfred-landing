@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfred — Seu Assistente Financeiro</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #06060A;
+    --dark: #09090F;
+    --dark2: #0D0D15;
+    --gold: #C9A84C;
+    --gold-light: #E8C76A;
+    --gold-bright: #F5D27A;
+    --white: #F0EDE6;
+    --gray: rgba(240,237,230,0.45);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--black);
+    color: var(--white);
+    overflow-x: hidden;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+  a { text-decoration: none; }
+
+  .bat-signal {
+    position: absolute;
+    bottom: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 700px;
+    background: conic-gradient(from 80deg at 50% 100%, transparent 0deg, rgba(201,168,76,0.18) 20deg, rgba(201,168,76,0.07) 40deg, transparent 60deg);
+    pointer-events: none;
+    filter: blur(12px);
+  }
+  .bat-signal-2 {
+    position: absolute;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 500px;
+    background: conic-gradient(from 85deg at 50% 100%, transparent 0deg, rgba(201,168,76,0.25) 10deg, rgba(255,220,100,0.12) 20deg, transparent 30deg);
+    pointer-events: none;
+    filter: blur(6px);
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.25rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(6,6,10,0.98) 60%, transparent);
+  }
+  .nav-logo {
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    background: linear-gradient(135deg, #C9A84C, #F5D27A, #C9A84C);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .nav-btn {
+    border: 1px solid rgba(201,168,76,0.5);
+    color: #C9A84C;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: inline-block;
+    border-radius: 2px;
+  }
+  .nav-btn:hover {
+    background: rgba(201,168,76,0.12);
+    border-color: #C9A84C;
+    box-shadow: 0 0 20px rgba(201,168,76,0.2);
+  }
+
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 8rem 2rem 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 100%, rgba(201,168,76,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 85%, rgba(201,168,76,0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: #C9A84C;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.1s forwards;
+  }
+  .hero-title {
+    font-size: clamp(2.8rem, 8vw, 6rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.3s forwards;
+    letter-spacing: -0.02em;
+  }
+  .hero-title strong {
+    font-weight: 600;
+    background: linear-gradient(135deg, #C9A84C 0%, #F5D27A 50%, #C9A84C 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: rgba(240,237,230,0.6);
+    max-width: 480px;
+    margin: 0 auto 3rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.5s forwards;
+    line-height: 1.7;
+  }
+  .hero-btns {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.7s forwards;
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, #C9A84C, #E8C76A);
+    color: #06060A;
+    padding: 0.9rem 2.5rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    border-radius: 2px;
+    display: inline-block;
+    transition: all 0.25s;
+    box-shadow: 0 4px 24px rgba(201,168,76,0.3);
+  }
+  .btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(201,168,76,0.45);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: rgba(240,237,230,0.7);
+    padding: 0.9rem 2.5rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(240,237,230,0.2);
+    cursor: pointer;
+    border-radius: 2px;
+    display: inline-block;
+    transition: all 0.25s;
+  }
+  .btn-ghost:hover {
+    border-color: rgba(201,168,76,0.5);
+    color: #C9A84C;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, rgba(201,168,76,0.6), transparent);
+    margin: 4rem auto 0;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.9s forwards;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(201,168,76,0.08);
+  }
+  .stat {
+    background: #09090F;
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 2.5rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #C9A84C, #F5D27A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: rgba(240,237,230,0.45);
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+  }
+
+  section {
+    padding: 6rem 2rem;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: #C9A84C;
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 0.3rem 0.9rem;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+  }
+  .sec-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 300;
+    line-height: 1.2;
+    margin-bottom: 3rem;
+    letter-spacing: -0.01em;
+  }
+  .sec-title strong {
+    font-weight: 600;
+    background: linear-gradient(135deg, #C9A84C, #F5D27A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1px;
+    background: rgba(201,168,76,0.08);
+  }
+  .step {
+    background: #09090F;
+    padding: 2.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .step::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.0), transparent);
+    transition: background 0.3s;
+  }
+  .step:hover { background: #0D0D15; }
+  .step:hover::after { background: linear-gradient(90deg, transparent, #C9A84C, transparent); }
+  .step-n {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: rgba(201,168,76,0.12);
+    line-height: 1;
+    margin-bottom: 1.25rem;
+    transition: color 0.3s;
+  }
+  .step:hover .step-n { color: rgba(201,168,76,0.25); }
+  .step-t { font-size: 0.95rem; font-weight: 500; margin-bottom: 0.75rem; color: #F0EDE6; }
+  .step-d { font-size: 0.87rem; color: rgba(240,237,230,0.45); line-height: 1.65; }
+
+  .quote-wrap {
+    background: #09090F;
+    position: relative;
+    overflow: hidden;
+    padding: 5rem 2rem;
+    text-align: center;
+  }
+  .quote-glow {
+    position: absolute;
+    bottom: -100px; left: 50%;
+    transform: translateX(-50%);
+    width: 500px; height: 400px;
+    background: radial-gradient(ellipse at 50% 100%, rgba(201,168,76,0.12) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .quote-mark {
+    font-size: 5rem;
+    font-weight: 300;
+    line-height: 0.6;
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, #C9A84C, #F5D27A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0.6;
+  }
+  .quote-text {
+    font-size: clamp(1.3rem, 3.5vw, 2rem);
+    font-weight: 300;
+    font-style: italic;
+    max-width: 640px;
+    margin: 0 auto 1.5rem;
+    line-height: 1.5;
+    color: rgba(240,237,230,0.9);
+    letter-spacing: -0.01em;
+  }
+  .quote-by {
+    font-size: 0.72rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #C9A84C;
+  }
+
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px;
+    background: rgba(201,168,76,0.08);
+    margin-top: 3rem;
+  }
+  .plan {
+    background: #09090F;
+    padding: 3rem 2.5rem;
+    position: relative;
+    transition: background 0.3s;
+  }
+  .plan:hover { background: #0D0D15; }
+  .plan-hot {
+    border: 1px solid rgba(201,168,76,0.4);
+    box-shadow: inset 0 0 40px rgba(201,168,76,0.04), 0 0 40px rgba(201,168,76,0.06);
+  }
+  .plan-badge {
+    position: absolute;
+    top: 0; right: 2rem;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #C9A84C, #E8C76A);
+    color: #06060A;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.9rem;
+    border-radius: 2px;
+  }
+  .plan-name {
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: #C9A84C;
+    margin-bottom: 1.5rem;
+  }
+  .plan-price {
+    font-size: 3.2rem;
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+  }
+  .plan-price sup { font-size: 1rem; font-weight: 400; vertical-align: super; }
+  .plan-period { font-size: 0.78rem; color: rgba(240,237,230,0.35); margin-bottom: 2rem; }
+  .plan-line { width: 32px; height: 1px; background: linear-gradient(90deg, #C9A84C, transparent); margin-bottom: 2rem; }
+  .plan-feats { list-style: none; margin-bottom: 2.5rem; }
+  .plan-feats li {
+    font-size: 0.875rem;
+    color: rgba(240,237,230,0.6);
+    padding: 0.55rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .plan-feats li::before {
+    content: '';
+    width: 3px; height: 3px;
+    background: #C9A84C;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 4px rgba(201,168,76,0.6);
+  }
+  .plan-cta {
+    display: block;
+    text-align: center;
+    padding: 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    transition: all 0.25s;
+    cursor: pointer;
+  }
+  .plan-cta-out {
+    border: 1px solid rgba(201,168,76,0.35);
+    color: rgba(201,168,76,0.8);
+    background: transparent;
+  }
+  .plan-cta-out:hover {
+    border-color: #C9A84C;
+    color: #C9A84C;
+    background: rgba(201,168,76,0.06);
+    box-shadow: 0 0 20px rgba(201,168,76,0.1);
+  }
+  .plan-cta-fill {
+    background: linear-gradient(135deg, #C9A84C, #E8C76A);
+    color: #06060A;
+    border: none;
+    box-shadow: 0 4px 20px rgba(201,168,76,0.25);
+  }
+  .plan-cta-fill:hover {
+    box-shadow: 0 6px 28px rgba(201,168,76,0.4);
+    transform: translateY(-1px);
+  }
+
+  footer {
+    border-top: 1px solid rgba(201,168,76,0.1);
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .footer-glow {
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 400px; height: 200px;
+    background: radial-gradient(ellipse at 50% 100%, rgba(201,168,76,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .footer-logo {
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    background: linear-gradient(135deg, #C9A84C, #F5D27A, #C9A84C);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.75rem;
+  }
+  .footer-tag { font-size: 0.85rem; font-style: italic; color: rgba(240,237,230,0.35); margin-bottom: 2rem; }
+  .footer-copy { font-size: 0.72rem; color: rgba(240,237,230,0.18); letter-spacing: 0.08em; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .stats { grid-template-columns: 1fr; }
+    section { padding: 4rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">ALFRED</div>
+  <a href="https://wa.me/5511985868423" class="nav-btn">Começar agora</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="bat-signal"></div>
+  <div class="bat-signal-2"></div>
+  <p class="hero-eyebrow">Assistente Financeiro Pessoal</p>
+  <h1 class="hero-title">Alguém que cuida do seu<br><strong>dinheiro</strong> enquanto<br>você vive sua vida.</h1>
+  <p class="hero-sub">Alfred é seu mordomo financeiro no WhatsApp. Discreto, preciso e sempre presente — sem planilhas, sem apps complexos.</p>
+  <div class="hero-btns">
+    <a href="https://wa.me/5511985868423" class="btn-gold">Falar com o Alfred</a>
+    <a href="#como-funciona" class="btn-ghost">Como funciona</a>
+  </div>
+  <div class="scroll-line"></div>
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">81M</div>
+    <div class="stat-label">brasileiros inadimplentes</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">79%</div>
+    <div class="stat-label">das famílias endividadas</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">R$518B</div>
+    <div class="stat-label">em dívidas no Brasil</div>
+  </div>
+</div>
+
+<section id="como-funciona">
+  <div class="tag">O método</div>
+  <h2 class="sec-title">Controle financeiro de verdade,<br>sem complicar a sua <strong>vida.</strong></h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">01</div>
+      <div class="step-t">Mapeamento completo</div>
+      <p class="step-d">Alfred levanta suas dívidas, orçamento e estilo de vida em uma conversa pelo WhatsApp. Sem formulários, sem planilhas.</p>
+    </div>
+    <div class="step">
+      <div class="step-n">02</div>
+      <div class="step-t">Diagnóstico por IA</div>
+      <p class="step-d">Após o mapeamento, Alfred entrega uma análise honesta da sua situação e um plano semanal personalizado.</p>
+    </div>
+    <div class="step">
+      <div class="step-n">03</div>
+      <div class="step-t">Acompanhamento diário</div>
+      <p class="step-d">Registre gastos em segundos. Alfred avisa quando você está se aproximando do limite de cada categoria.</p>
+    </div>
+    <div class="step">
+      <div class="step-n">04</div>
+      <div class="step-t">Consulte antes de comprar</div>
+      <p class="step-d">Quer comprar algo? Pergunte ao Alfred. Ele mostra o impacto real na sua renda antes da decisão.</p>
+    </div>
+  </div>
+</section>
+
+<div class="quote-wrap">
+  <div class="quote-glow"></div>
+  <div class="quote-mark">"</div>
+  <p class="quote-text">O problema não é quanto você ganha. É não saber para onde vai o que você ganha.</p>
+  <p class="quote-by">Alfred — Assistente Financeiro</p>
+</div>
+
+<section id="planos">
+  <div class="tag">Planos</div>
+  <h2 class="sec-title">Escolha o plano<br>ideal para <strong>você.</strong></h2>
+  <div class="plans">
+    <div class="plan">
+      <div class="plan-name">Individual</div>
+      <div class="plan-price"><sup>R$</sup>29<sup>,90</sup></div>
+      <div class="plan-period">por mês</div>
+      <div class="plan-line"></div>
+      <ul class="plan-feats">
+        <li>Diagnóstico completo de dívidas</li>
+        <li>Mapeamento de orçamento</li>
+        <li>Plano semanal de gastos</li>
+        <li>Acompanhamento diário com alertas</li>
+        <li>Consulta de compras</li>
+        <li>Relatório mensal</li>
+      </ul>
+      <a href="https://wa.me/5511985868423" class="plan-cta plan-cta-out">Começar</a>
+    </div>
+    <div class="plan plan-hot">
+      <div class="plan-badge">Mais popular</div>
+      <div class="plan-name">Casal</div>
+      <div class="plan-price"><sup>R$</sup>44<sup>,90</sup></div>
+      <div class="plan-period">por mês — dois números</div>
+      <div class="plan-line"></div>
+      <ul class="plan-feats">
+        <li>Tudo do plano Individual</li>
+        <li>Dois números vinculados</li>
+        <li>Orçamento compartilhado</li>
+        <li>Gastos registrados por ambos</li>
+        <li>Relatório unificado do casal</li>
+        <li>Virada de mês sincronizada</li>
+      </ul>
+      <a href="https://wa.me/5511985868423" class="plan-cta plan-cta-fill">Começar juntos</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-glow"></div>
+  <div class="footer-logo">ALFRED</div>
+  <p class="footer-tag">"Alguém que cuida do seu dinheiro enquanto você vive sua vida."</p>
+  <p class="footer-copy">© 2025 Alfred Assistente Financeiro. Todos os direitos reservados.</p>
+</footer>
+
+</body>
+</html>
