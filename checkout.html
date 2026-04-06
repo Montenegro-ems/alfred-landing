@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alfred — Assinar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: #080808;
+      background: #0A0A0A;
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
       display: flex;
@@ -17,186 +18,293 @@
       padding: 24px;
     }
 
-    .card {
-      background: #111;
-      border: 1px solid #2A2A2A;
-      border-top: 3px solid #FFD700;
-      border-radius: 12px;
-      padding: 40px 36px;
+    .wrapper {
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
     }
 
-    .logo {
+    /* ── Header ── */
+    .header {
       text-align: center;
-      margin-bottom: 8px;
-      font-size: 32px;
-    }
-
-    .titulo {
-      text-align: center;
-      font-size: 22px;
-      font-weight: 700;
-      color: #FFD700;
-      letter-spacing: 3px;
-      margin-bottom: 4px;
-    }
-
-    .subtitulo {
-      text-align: center;
-      font-size: 13px;
-      color: #888;
       margin-bottom: 32px;
     }
 
-    .planos {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
+    .avatar-ring {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      border: 2px solid #C8A800;
+      padding: 3px;
+      margin: 0 auto 16px;
+      background: #0A0A0A;
+      box-shadow: 0 0 24px rgba(200, 168, 0, 0.15);
     }
 
-    .plano {
-      flex: 1;
-      border: 1.5px solid #2A2A2A;
-      border-radius: 8px;
-      padding: 14px 10px;
-      cursor: pointer;
-      transition: border-color 0.2s;
-      text-align: center;
-      background: #161616;
+    .avatar-ring img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center top;
     }
 
-    .plano.selecionado {
-      border-color: #FFD700;
-      background: #1A1700;
-    }
-
-    .plano-nome {
-      font-size: 12px;
-      color: #888;
+    .nome {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      color: #F0F0F0;
+      letter-spacing: 4px;
       margin-bottom: 4px;
     }
 
-    .plano-preco {
-      font-size: 18px;
-      font-weight: 700;
-      color: #F0F0F0;
-    }
-
-    .plano-preco span {
-      font-size: 11px;
-      font-weight: 400;
-      color: #666;
-    }
-
-    label {
-      display: block;
+    .tagline {
       font-size: 12px;
-      color: #888;
-      margin-bottom: 6px;
-      letter-spacing: 0.5px;
+      color: #666;
+      letter-spacing: 1px;
     }
 
-    input {
+    /* ── Card ── */
+    .card {
+      background: #111;
+      border: 1px solid #1E1E1E;
+      border-radius: 12px;
+      padding: 32px;
+    }
+
+    /* ── Planos ── */
+    .label-secao {
+      font-size: 10px;
+      font-weight: 600;
+      color: #555;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .planos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .plano {
+      border: 1.5px solid #222;
+      border-radius: 8px;
+      padding: 16px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      background: #0E0E0E;
+      position: relative;
+    }
+
+    .plano:hover {
+      border-color: #3A3000;
+    }
+
+    .plano.selecionado {
+      border-color: #C8A800;
+      background: #12100A;
+    }
+
+    .plano.selecionado::after {
+      content: "✓";
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 11px;
+      color: #C8A800;
+    }
+
+    .plano-nome {
+      font-size: 11px;
+      font-weight: 500;
+      color: #666;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .plano-preco {
+      font-size: 22px;
+      font-weight: 600;
+      color: #F0F0F0;
+      line-height: 1;
+    }
+
+    .plano-preco .centavos {
+      font-size: 13px;
+      font-weight: 400;
+      color: #555;
+    }
+
+    .plano-desc {
+      font-size: 10px;
+      color: #444;
+      margin-top: 4px;
+    }
+
+    /* ── Input ── */
+    .campo {
+      margin-bottom: 24px;
+    }
+
+    .campo label {
+      display: block;
+      font-size: 10px;
+      font-weight: 600;
+      color: #555;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .campo input {
       width: 100%;
-      background: #1A1A1A;
-      border: 1px solid #2A2A2A;
-      border-radius: 6px;
-      padding: 12px 14px;
+      background: #0E0E0E;
+      border: 1.5px solid #1E1E1E;
+      border-radius: 7px;
+      padding: 13px 16px;
       font-size: 15px;
+      font-family: 'Inter', sans-serif;
       color: #F0F0F0;
       outline: none;
       transition: border-color 0.2s;
-      margin-bottom: 20px;
     }
 
-    input:focus {
-      border-color: #FFD700;
+    .campo input:focus {
+      border-color: #C8A800;
     }
 
-    input::placeholder {
-      color: #444;
+    .campo input::placeholder {
+      color: #333;
     }
 
     .erro {
-      color: #F44336;
-      font-size: 12px;
-      margin-top: -16px;
-      margin-bottom: 16px;
+      font-size: 11px;
+      color: #E53935;
+      margin-top: 6px;
       display: none;
     }
 
-    button {
+    /* ── Botão ── */
+    .btn {
       width: 100%;
-      background: #FFD700;
-      color: #080808;
+      background: #C8A800;
+      color: #0A0A0A;
       border: none;
-      border-radius: 6px;
-      padding: 14px;
-      font-size: 15px;
-      font-weight: 700;
+      border-radius: 7px;
+      padding: 15px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 1px;
+      text-transform: uppercase;
       cursor: pointer;
-      transition: opacity 0.2s;
-      letter-spacing: 0.5px;
+      transition: opacity 0.2s, background 0.2s;
     }
 
-    button:hover { opacity: 0.9; }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn:hover { background: #D4B200; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; background: #C8A800; }
 
+    /* ── Rodapé ── */
     .rodape {
       text-align: center;
       margin-top: 20px;
       font-size: 11px;
-      color: #444;
+      color: #333;
+      line-height: 1.8;
     }
 
-    .rodape a { color: #666; text-decoration: none; }
+    .rodape a {
+      color: #444;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .rodape a:hover { color: #C8A800; }
+
+    .seguro {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 4px;
+      font-size: 10px;
+      color: #2E2E2E;
+    }
+
+    .seguro svg {
+      opacity: 0.4;
+    }
   </style>
 </head>
 <body>
 
-<div class="card">
-  <div class="logo">🦇</div>
-  <div class="titulo">ALFRED</div>
-  <div class="subtitulo">Escolha seu plano e informe seu WhatsApp</div>
+<div class="wrapper">
 
-  <div class="planos">
-    <div class="plano selecionado" id="plano-individual" onclick="selecionarPlano('individual')">
-      <div class="plano-nome">Individual</div>
-      <div class="plano-preco">R$ 29,90<span>/mês</span></div>
+  <div class="header">
+    <div class="avatar-ring">
+      <img src="alfred-avatar.png" alt="Alfred">
     </div>
-    <div class="plano" id="plano-casal" onclick="selecionarPlano('casal')">
-      <div class="plano-nome">Casal</div>
-      <div class="plano-preco">R$ 44,90<span>/mês</span></div>
-    </div>
+    <div class="nome">ALFRED</div>
+    <div class="tagline">Seu mordomo financeiro</div>
   </div>
 
-  <label>SEU NÚMERO DE WHATSAPP</label>
-  <input
-    type="tel"
-    id="numero"
-    placeholder="(11) 99999-9999"
-    maxlength="15"
-    oninput="formatarNumero(this)"
-  >
-  <div class="erro" id="erro">Por favor, informe um número de WhatsApp válido com DDD.</div>
+  <div class="card">
 
-  <button id="btn-assinar" onclick="assinar()">Continuar para pagamento</button>
+    <div class="label-secao">Escolha seu plano</div>
+
+    <div class="planos">
+      <div class="plano selecionado" id="plano-individual" onclick="selecionarPlano('individual')">
+        <div class="plano-nome">Individual</div>
+        <div class="plano-preco">R$ 29<span class="centavos">,90/mês</span></div>
+        <div class="plano-desc">Para você</div>
+      </div>
+      <div class="plano" id="plano-casal" onclick="selecionarPlano('casal')">
+        <div class="plano-nome">Casal</div>
+        <div class="plano-preco">R$ 44<span class="centavos">,90/mês</span></div>
+        <div class="plano-desc">Para dois</div>
+      </div>
+    </div>
+
+    <div class="campo">
+      <label>Seu número de WhatsApp</label>
+      <input
+        type="tel"
+        id="numero"
+        placeholder="(11) 99999-9999"
+        maxlength="15"
+        oninput="formatarNumero(this)"
+      >
+      <div class="erro" id="erro">Informe um número válido com DDD.</div>
+    </div>
+
+    <button class="btn" id="btn-assinar" onclick="assinar()">
+      Continuar para pagamento
+    </button>
+
+  </div>
 
   <div class="rodape">
-    Pagamento seguro via Stripe &nbsp;·&nbsp;
-    <a href="https://alfredfin.com.br">Voltar ao site</a>
+    <a href="https://alfredfin.com.br">← Voltar ao site</a>
+    <div class="seguro">
+      <svg width="10" height="12" viewBox="0 0 10 12" fill="none">
+        <rect x="1" y="5" width="8" height="7" rx="1.5" stroke="#888" stroke-width="1.2"/>
+        <path d="M3 5V3.5a2 2 0 0 1 4 0V5" stroke="#888" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      Pagamento seguro via Stripe
+    </div>
   </div>
+
 </div>
 
 <script>
-  // Price IDs do Stripe (Live)
   const PRICE_IDS = {
     individual: "price_1TEqAvQjOVl4Rkspx9u5VQSY",
     casal:      "price_1TEqD4QjOVl4RkspzF6umOeU",
   };
 
-  // URL do backend Alfred no Railway
   const BACKEND_URL = "https://alfred-financebot-production.up.railway.app";
 
   let planoSelecionado = "individual";
@@ -210,7 +318,7 @@
   function formatarNumero(input) {
     let v = input.value.replace(/\D/g, "");
     if (v.length > 11) v = v.slice(0, 11);
-    if (v.length > 7) v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+    if (v.length > 7)      v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
     else if (v.length > 2) v = `(${v.slice(0,2)}) ${v.slice(2)}`;
     else if (v.length > 0) v = `(${v}`;
     input.value = v;
@@ -218,8 +326,8 @@
 
   async function assinar() {
     const input = document.getElementById("numero");
-    const erro = document.getElementById("erro");
-    const btn = document.getElementById("btn-assinar");
+    const erro  = document.getElementById("erro");
+    const btn   = document.getElementById("btn-assinar");
 
     const numeros = input.value.replace(/\D/g, "");
     if (numeros.length < 10 || numeros.length > 11) {
@@ -227,9 +335,8 @@
       return;
     }
     erro.style.display = "none";
-
     btn.disabled = true;
-    btn.textContent = "Redirecionando...";
+    btn.textContent = "Aguarde...";
 
     try {
       const resp = await fetch(`${BACKEND_URL}/criar-checkout`, {
@@ -251,9 +358,14 @@
     } catch (e) {
       btn.disabled = false;
       btn.textContent = "Continuar para pagamento";
-      alert("Erro ao criar sessão de pagamento. Tente novamente.");
+      alert("Erro ao processar. Tente novamente.");
     }
   }
+
+  // Pré-seleciona plano via query string (?plano=casal)
+  const params = new URLSearchParams(window.location.search);
+  const planoParam = params.get("plano");
+  if (planoParam === "casal") selecionarPlano("casal");
 </script>
 
 </body>
