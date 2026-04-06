@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alfred — Assinar</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #080808;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: #111;
+      border: 1px solid #2A2A2A;
+      border-top: 3px solid #FFD700;
+      border-radius: 12px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 32px;
+    }
+
+    .titulo {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #FFD700;
+      letter-spacing: 3px;
+      margin-bottom: 4px;
+    }
+
+    .subtitulo {
+      text-align: center;
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 32px;
+    }
+
+    .planos {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .plano {
+      flex: 1;
+      border: 1.5px solid #2A2A2A;
+      border-radius: 8px;
+      padding: 14px 10px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      text-align: center;
+      background: #161616;
+    }
+
+    .plano.selecionado {
+      border-color: #FFD700;
+      background: #1A1700;
+    }
+
+    .plano-nome {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 4px;
+    }
+
+    .plano-preco {
+      font-size: 18px;
+      font-weight: 700;
+      color: #F0F0F0;
+    }
+
+    .plano-preco span {
+      font-size: 11px;
+      font-weight: 400;
+      color: #666;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    input {
+      width: 100%;
+      background: #1A1A1A;
+      border: 1px solid #2A2A2A;
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 15px;
+      color: #F0F0F0;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 20px;
+    }
+
+    input:focus {
+      border-color: #FFD700;
+    }
+
+    input::placeholder {
+      color: #444;
+    }
+
+    .erro {
+      color: #F44336;
+      font-size: 12px;
+      margin-top: -16px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    button {
+      width: 100%;
+      background: #FFD700;
+      color: #080808;
+      border: none;
+      border-radius: 6px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      letter-spacing: 0.5px;
+    }
+
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .rodape {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 11px;
+      color: #444;
+    }
+
+    .rodape a { color: #666; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo">🦇</div>
+  <div class="titulo">ALFRED</div>
+  <div class="subtitulo">Escolha seu plano e informe seu WhatsApp</div>
+
+  <div class="planos">
+    <div class="plano selecionado" id="plano-individual" onclick="selecionarPlano('individual')">
+      <div class="plano-nome">Individual</div>
+      <div class="plano-preco">R$ 29,90<span>/mês</span></div>
+    </div>
+    <div class="plano" id="plano-casal" onclick="selecionarPlano('casal')">
+      <div class="plano-nome">Casal</div>
+      <div class="plano-preco">R$ 44,90<span>/mês</span></div>
+    </div>
+  </div>
+
+  <label>SEU NÚMERO DE WHATSAPP</label>
+  <input
+    type="tel"
+    id="numero"
+    placeholder="(11) 99999-9999"
+    maxlength="15"
+    oninput="formatarNumero(this)"
+  >
+  <div class="erro" id="erro">Por favor, informe um número de WhatsApp válido com DDD.</div>
+
+  <button id="btn-assinar" onclick="assinar()">Continuar para pagamento</button>
+
+  <div class="rodape">
+    Pagamento seguro via Stripe &nbsp;·&nbsp;
+    <a href="https://alfredfin.com.br">Voltar ao site</a>
+  </div>
+</div>
+
+<script>
+  // Price IDs do Stripe (Live)
+  const PRICE_IDS = {
+    individual: "price_1TEqAvQjOVl4Rkspx9u5VQSY",
+    casal:      "price_1TEqD4QjOVl4RkspzF6umOeU",
+  };
+
+  // URL do backend Alfred no Railway
+  const BACKEND_URL = "https://alfred-financebot-production.up.railway.app";
+
+  let planoSelecionado = "individual";
+
+  function selecionarPlano(plano) {
+    planoSelecionado = plano;
+    document.getElementById("plano-individual").classList.toggle("selecionado", plano === "individual");
+    document.getElementById("plano-casal").classList.toggle("selecionado", plano === "casal");
+  }
+
+  function formatarNumero(input) {
+    let v = input.value.replace(/\D/g, "");
+    if (v.length > 11) v = v.slice(0, 11);
+    if (v.length > 7) v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+    else if (v.length > 2) v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+    else if (v.length > 0) v = `(${v}`;
+    input.value = v;
+  }
+
+  async function assinar() {
+    const input = document.getElementById("numero");
+    const erro = document.getElementById("erro");
+    const btn = document.getElementById("btn-assinar");
+
+    const numeros = input.value.replace(/\D/g, "");
+    if (numeros.length < 10 || numeros.length > 11) {
+      erro.style.display = "block";
+      return;
+    }
+    erro.style.display = "none";
+
+    btn.disabled = true;
+    btn.textContent = "Redirecionando...";
+
+    try {
+      const resp = await fetch(`${BACKEND_URL}/criar-checkout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          price_id: PRICE_IDS[planoSelecionado],
+          numero_whatsapp: `55${numeros}`,
+          plano: planoSelecionado,
+        }),
+      });
+
+      const data = await resp.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("URL não retornada");
+      }
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = "Continuar para pagamento";
+      alert("Erro ao criar sessão de pagamento. Tente novamente.");
+    }
+  }
+</script>
+
+</body>
+</html>
